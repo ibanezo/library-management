@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
-import com.library.model.Book;
+import com.library.model.BookItem;
 import com.library.repository.BookRepository;
 
 @DataJpaTest
@@ -23,24 +23,30 @@ public class BookRepositoryTest {
 
 	@Test
 	public void test_empty_library() {
-		List<Book> emptyList = repository.findAll();
+		List<BookItem> emptyList = repository.findAll();
 		assertThat(emptyList).isEmpty();
 	}
 
 	@Test
 	public void test_save_one_book() {
-		Book book = repository.save(new Book("Title test", "Author test"));
+		BookItem book = new BookItem();
+		book.setTitle("Title test");
+		repository.save(book);
 		assertThat(book).hasFieldOrPropertyWithValue("title", "Title test");
 	}
 
 	@Test
 	public void test_save_multiple_books() {
-		Book book1 = new Book("Book1", "Author1");
+		BookItem book1 = new BookItem();
+		book1.setTitle("Book1");
+		book1.setAuthor("Author1");
 		entityManager.persist(book1);
-		Book book2 = new Book("Book2", "Author2");
+		BookItem book2 = new BookItem();
+		book2.setTitle("Book2");
+		book2.setAuthor("Author2");
 		entityManager.persist(book2);
 
-		List<Book> books = repository.findAll();
+		List<BookItem> books = repository.findAll();
 		assertThat(books).hasSize(2).contains(book1, book2);
 	}
 
