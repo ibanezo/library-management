@@ -53,23 +53,23 @@ public class UserServiceTest {
 	public void test_find_by_id() {
 		User user = new User();
 		user.setDisplayName("Test Name");
-		user.setUserId(123);
-		Mockito.when(repositoryMock.findById(user.getUserId())).thenReturn(Optional.of(user));
+		user.setId(123);
+		Mockito.when(repositoryMock.findById(user.getId())).thenReturn(Optional.of(user));
 
 		service.setRepository(repositoryMock);
 		service.save(user);
 
-		assertEquals(123, repositoryMock.findById(user.getUserId()).get().getUserId());
+		assertEquals(123, repositoryMock.findById(user.getId()).get().getId());
 	}
 	
 	@Test
 	public void test_remove_by_id() {
 		User book = new User();
 		book.setDisplayName("Test Name");
-		book.setUserId(123);
+		book.setId(123);
 
 		service.setRepository(repositoryMock);
-		service.delete(book.getUserId());
+		service.delete(book.getId());
 		
 		Mockito.verify(repositoryMock).deleteById(Mockito.any());
 	}

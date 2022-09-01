@@ -50,4 +50,23 @@ public class BookRepositoryTest {
 		assertThat(books).hasSize(2).contains(book1, book2);
 	}
 
+	@Test
+	public void test_find_by_available_books() {
+		
+		BookItem book1 = new BookItem();
+		book1.setTitle("Book1");
+		book1.setAuthor("Author1");
+		book1.setAvailable(true);
+		
+		BookItem book2 = new BookItem();
+		book2.setTitle("Book2");
+		book2.setAuthor("Author2");
+		book2.setAvailable(false);
+		
+		entityManager.persist(book1);
+		entityManager.persist(book2);
+
+		List<BookItem> books = repository.findAllByAvailable(true);
+		assertThat(books).hasSize(1).contains(book1);
+	}
 }

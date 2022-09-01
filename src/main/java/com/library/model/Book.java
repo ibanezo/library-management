@@ -11,8 +11,8 @@ import javax.persistence.Table;
 public class Book {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private int bookId;
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private int id;
 	private String title;
 	private String author;
 
@@ -25,12 +25,12 @@ public class Book {
 		this.author = author;
 	}
 
-	public int getBookId() {
-		return bookId;
+	public int getId() {
+		return id;
 	}
 
-	public void setBookId(int bookId) {
-		this.bookId = bookId;
+	public void setId(int bookId) {
+		this.id = bookId;
 	}
 
 	public String getTitle() {

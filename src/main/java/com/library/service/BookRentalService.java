@@ -1,15 +1,24 @@
 package com.library.service;
 
+import java.util.List;
+
+import com.library.exception.BookCopyException;
 import com.library.exception.BookLimitException;
-import com.library.exception.BookNotAvailableException;
-import com.library.repository.BookRepository;
-import com.library.repository.UserRepository;
+import com.library.model.BookRental;
+import com.library.repository.BookRentalRepository;
 
 public interface BookRentalService {
 
-	public void borrowBooks(int bookId, int borrowerId) throws BookLimitException, BookNotAvailableException;
+	public List<BookRental> getAll();
 
-	public void setBookRepository(BookRepository bookRepository);
+	public BookRental get(int id);
+	
+	public BookRental addNew(BookRental rental);
 
-	public void setUserRepository(UserRepository userRepository);
+	public BookRental save(BookRental rental);
+
+	public void borrowBooks(List<Integer> bookIds, int borrowerId) throws BookLimitException, BookCopyException;
+
+	public void setRentalRepository(BookRentalRepository rentalRepository);
+	
 }

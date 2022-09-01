@@ -1,12 +1,9 @@
 package com.library.model;
 
-import java.util.List;
-
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -14,40 +11,37 @@ import javax.persistence.Table;
 public class User {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private int userId;
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private int id;
 
 	private String displayName;
 
 	private String username;
 
 	private String password;
-	
+
 	private String email;
-	
+
 	private int totalBooks;
-	
-	@OneToMany(mappedBy="borrower")
-	private List<BookItem> books;
 
 	public User() {
 	}
 
 	public User(int id, String displayName, String username, String password, String email) {
 		super();
-		this.userId = id;
+		this.id = id;
 		this.displayName = displayName;
 		this.username = username;
 		this.password = password;
 		this.email = email;
 	}
 
-	public int getUserId() {
-		return userId;
+	public int getId() {
+		return id;
 	}
 
-	public void setUserId(int userId) {
-		this.userId = userId;
+	public void setId(int id) {
+		this.id = id;
 	}
 
 	public String getDisplayName() {
@@ -73,14 +67,6 @@ public class User {
 	public void setPassword(String password) {
 		this.password = password;
 	}
-	
-	public List<BookItem> getBooks() {
-		return books;
-	}
-
-	public void setBooks(List<BookItem> books) {
-		this.books = books;
-	}
 
 	public String getEmail() {
 		return email;
@@ -89,7 +75,7 @@ public class User {
 	public void setEmail(String email) {
 		this.email = email;
 	}
-	
+
 	public int getTotalBooks() {
 		return totalBooks;
 	}

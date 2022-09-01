@@ -53,23 +53,23 @@ public class BookServiceTest {
 	public void test_find_by_id() {
 		BookItem book = new BookItem();
 		book.setTitle("Title Find");
-		book.setBookId(123);
-		Mockito.when(repositoryMock.findById(book.getBookId())).thenReturn(Optional.of(book));
+		book.setId(123);
+		Mockito.when(repositoryMock.findById(book.getId())).thenReturn(Optional.of(book));
 
 		service.setRepository(repositoryMock);
 		service.save(book);
 
-		assertEquals(123, repositoryMock.findById(book.getBookId()).get().getBookId());
+		assertEquals(123, repositoryMock.findById(book.getId()).get().getId());
 	}
 	
 	@Test
 	public void test_remove_by_id() {
 		BookItem book = new BookItem();
 		book.setTitle("Title Find");
-		book.setBookId(123);
+		book.setId(123);
 
 		service.setRepository(repositoryMock);
-		service.delete(book.getBookId());
+		service.delete(book.getId());
 		
 		Mockito.verify(repositoryMock).deleteById(Mockito.any());
 	}

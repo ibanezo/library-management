@@ -21,6 +21,16 @@ public class BookServiceImpl implements BookService {
 	}
 
 	@Override
+	public List<BookItem> getAllAvailable(boolean available) {
+		return bookRepository.findAllByAvailable(available);
+	}
+	
+	@Override
+	public List<BookItem> get(List<Integer> ids) {
+		return bookRepository.findAllById(ids);
+	}
+	
+	@Override
 	public BookItem save(BookItem book) {
 		book.setAvailable(true);
 		return bookRepository.save(book);
@@ -28,8 +38,7 @@ public class BookServiceImpl implements BookService {
 
 	@Override
 	public BookItem findById(int bookId) {
-		BookItem book = bookRepository.findById(bookId).get();
-		return book;
+		return bookRepository.findById(bookId).get();
 	}
 
 	@Override

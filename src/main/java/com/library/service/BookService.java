@@ -8,6 +8,10 @@ import com.library.repository.BookRepository;
 public interface BookService {
 
 	public List<BookItem> getAll();
+	
+	public List<BookItem> getAllAvailable(boolean available);
+
+	List<BookItem> get(List<Integer> ids);
 
 	public BookItem save(BookItem book);
 
@@ -16,4 +20,5 @@ public interface BookService {
 	public void delete(int bookId);
 
 	public void setRepository(BookRepository repository);
+
 }
