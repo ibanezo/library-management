@@ -21,5 +21,9 @@ public class BookRentalController {
 	public void borrowBook(@RequestParam List<Integer> bookIds, @RequestParam int borrowerId) throws BookLimitException, BookCopyException {
 		service.borrowBooks(bookIds, borrowerId);
 	}
-
+	
+	@PostMapping(value = "/books/return")
+	public void returnBooks(@RequestParam List<Integer> bookIds, @RequestParam int borrowerId) {
+		service.returnBooks(bookIds, borrowerId);
+	}
 }

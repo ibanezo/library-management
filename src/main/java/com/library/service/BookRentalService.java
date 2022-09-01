@@ -18,6 +18,8 @@ public interface BookRentalService {
 	public BookRental save(BookRental rental);
 
 	public void borrowBooks(List<Integer> bookIds, int borrowerId) throws BookLimitException, BookCopyException;
+	
+	public void returnBooks(List<Integer> bookIds, int borrowerId);
 
 	public void setRentalRepository(BookRentalRepository rentalRepository);
 	

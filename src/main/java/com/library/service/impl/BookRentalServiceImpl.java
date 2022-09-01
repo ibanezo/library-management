@@ -81,6 +81,29 @@ public class BookRentalServiceImpl implements BookRentalService {
 
 	}
 
+	@Override
+	public void returnBooks(List<Integer> bookIds, int borrowerId) {
+		BookRental rental = rentalRepository.findByBorrowerId(borrowerId);
+		User borrower = userService.findById(borrowerId);
+		List<BookItem> books = rental.getRentedBooks();
+		List<BookItem> restBooks = new ArrayList<BookItem>();
+
+		for (int i = 0; i < books.size(); i++) {
+			BookItem book = books.get(i);
+			if (bookIds.contains(book.getId())) {
+				book.setAvailable(true);
+				borrower.setTotalBooks(borrower.getTotalBooks() - 1);
+				bookService.save(book);
+			} else {
+				restBooks.add(book);
+			}
+		}
+		
+		rental.setReturnDate(LocalDate.now());
+		rental.setRentedBooks(restBooks);
+		rentalRepository.save(rental);
+	}
+
 	private boolean copyOfBookExsists(BookItem rentedBook, BookItem bookItem) {
 		return bookItem.getAuthor() == rentedBook.getAuthor() && bookItem.getTitle() == rentedBook.getTitle();
 	}
@@ -96,7 +119,7 @@ public class BookRentalServiceImpl implements BookRentalService {
 		this.save(bookRent);
 
 	}
-	
+
 	public void setRentalRepository(BookRentalRepository rentalRepository) {
 		this.rentalRepository = rentalRepository;
 	}

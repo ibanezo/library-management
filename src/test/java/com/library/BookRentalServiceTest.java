@@ -5,8 +5,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.List;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,24 +40,35 @@ public class BookRentalServiceTest {
 	@MockBean
 	BookService bookServiceMock;
 
+	private BookItem book1;
+	private BookItem book2;
+	private BookItem book3;
+	private User user;
+	private BookRental bookRent;
+	
+	@BeforeEach
+    void setUp() {
+		book1 = createBookItem("Title Test1", true);
+		book2 = createBookItem("Title Test2", true);
+		book3 = createBookItem("Title Test2", true);
+		user = createUser();
+		assertThat(book1).hasFieldOrPropertyWithValue("title", "Title Test1");
+		assertThat(book2).hasFieldOrPropertyWithValue("title", "Title Test2");
+		assertThat(user).hasFieldOrPropertyWithValue("displayName", "Test User");
+    }
+	
 	@Test
 	public void test_borrow_book() throws BookLimitException, BookCopyException {
-		BookItem book = createBookItem("Title test", true);
-		assertThat(book).hasFieldOrPropertyWithValue("title", "Title test");
-
-		User user = createUser();
-		assertThat(user).hasFieldOrPropertyWithValue("displayName", "Test User");
-
-		BookRental bookRent = new BookRental();
-
+		bookRent = new BookRental();
+		
 		Mockito.when(userServiceMock.findById(user.getId())).thenReturn(user);
-		Mockito.when(bookServiceMock.get(Arrays.asList(book.getId()))).thenReturn(Arrays.asList(book));
+		Mockito.when(bookServiceMock.get(Arrays.asList(book1.getId()))).thenReturn(Arrays.asList(book1));
 		Mockito.when(rentalRepositoryMock.findRentedBooksByBorrowerId(user.getId()))
 				.thenReturn(Arrays.asList(bookRent));
 
 		rentalService.setRentalRepository(rentalRepositoryMock);
 
-		rentalService.borrowBooks(Arrays.asList(book.getId()), user.getId());
+		rentalService.borrowBooks(Arrays.asList(book1.getId()), user.getId());
 
 		Mockito.verify(userServiceMock, Mockito.times(1)).findById(user.getId());
 		Mockito.verify(userServiceMock, Mockito.times(1)).save(user);
@@ -63,16 +76,7 @@ public class BookRentalServiceTest {
 
 	@Test
 	public void test_borrow_two_books() throws BookLimitException, BookCopyException {
-		BookItem book1 = createBookItem("Test1", true);
-		assertThat(book1).hasFieldOrPropertyWithValue("title", "Test1");
-
-		BookItem book2 = createBookItem("Test2", true);
-		assertThat(book2).hasFieldOrPropertyWithValue("title", "Test2");
-
-		User user = createUser();
-		assertThat(user).hasFieldOrPropertyWithValue("displayName", "Test User");
-
-		BookRental bookRent = new BookRental();
+		bookRent = new BookRental();
 
 		Mockito.when(userServiceMock.findById(user.getId())).thenReturn(user);
 		Mockito.when(bookServiceMock.get(Arrays.asList(book1.getId(), book2.getId())))
@@ -91,23 +95,17 @@ public class BookRentalServiceTest {
 
 	@Test
 	public void test_borrow_two_copies_of_book() throws BookLimitException, BookCopyException {
-		BookItem book = createBookItem("Test1", true);
-		assertThat(book).hasFieldOrPropertyWithValue("title", "Test1");
-
-		User user = createUser();
-		assertThat(user).hasFieldOrPropertyWithValue("displayName", "Test User");
-
-		BookRental bookRent = createBookRental(book, user);
+		bookRent = createBookRental(Arrays.asList(book1), user);
 
 		Mockito.when(userServiceMock.findById(user.getId())).thenReturn(user);
-		Mockito.when(bookServiceMock.get(Arrays.asList(book.getId()))).thenReturn(Arrays.asList(book));
+		Mockito.when(bookServiceMock.get(Arrays.asList(book1.getId()))).thenReturn(Arrays.asList(book1));
 		Mockito.when(rentalRepositoryMock.findRentedBooksByBorrowerId(user.getId()))
 				.thenReturn(Arrays.asList(bookRent));
 
 		rentalService.setRentalRepository(rentalRepositoryMock);
 
 		Exception exception = assertThrows(BookCopyException.class, () -> {
-			rentalService.borrowBooks(Arrays.asList(book.getId()), user.getId());
+			rentalService.borrowBooks(Arrays.asList(book1.getId()), user.getId());
 
 		});
 
@@ -115,6 +113,37 @@ public class BookRentalServiceTest {
 		String actualMessage = exception.getMessage();
 
 		Assertions.assertTrue(actualMessage.contains(expectedMessage));
+	}
+	
+	@Test
+	public void test_return_two_books() {
+		bookRent = createBookRental(Arrays.asList(book2,book3), user);
+		
+		Mockito.when(rentalRepositoryMock.findByBorrowerId(user.getId())).thenReturn(bookRent);
+		Mockito.when(userServiceMock.findById(user.getId())).thenReturn(user);
+		Mockito.when(bookServiceMock.save(book2)).thenReturn(book2);
+		Mockito.when(bookServiceMock.save(book3)).thenReturn(book3);
+		Mockito.when(rentalRepositoryMock.save(bookRent)).thenReturn(bookRent);
+		
+		rentalService.returnBooks(Arrays.asList(book3.getId()), user.getId());
+		
+		assertThat(book3.getId()).isNotNull();
+		assertThat(bookRent.getId()).isNotNull();
+	}
+	
+	@Test
+	public void test_return_one_book() {
+		bookRent = createBookRental(Arrays.asList(book1), user);
+		
+		Mockito.when(rentalRepositoryMock.findByBorrowerId(user.getId())).thenReturn(bookRent);
+		Mockito.when(userServiceMock.findById(user.getId())).thenReturn(user);
+		Mockito.when(bookServiceMock.save(book1)).thenReturn(book1);
+		Mockito.when(rentalRepositoryMock.save(bookRent)).thenReturn(bookRent);
+		
+		rentalService.returnBooks(Arrays.asList(book1.getId()), user.getId());
+		
+		assertThat(book1.getId()).isNotNull();
+		assertThat(bookRent.getId()).isNotNull();
 	}
 
 	private User createUser() {
@@ -133,11 +162,11 @@ public class BookRentalServiceTest {
 		return book;
 	}
 
-	private BookRental createBookRental(BookItem book, User user) {
+	private BookRental createBookRental(List<BookItem> books, User user) {
 		BookRental bookRent = new BookRental();
 		bookRent.setCreationDate(LocalDate.now());
 		bookRent.setUser(user);
-		bookRent.setRentedBooks(Arrays.asList(book));
+		bookRent.setRentedBooks(books	);
 		return bookRent;
 	}
 
