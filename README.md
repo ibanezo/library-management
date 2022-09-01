@@ -29,13 +29,13 @@ mvn spring-boot:run
 
 ## Features and Designs
 
-- The Entites (Models) in this project are designed as User (USERS as table), Book as parent class of BookItem, BookItem (as an instance from Book) and BookRental (BOOK_RENTAL as table). The mapping between the User and the Book is esablished through BookRental Entity, i.e there is:
+- The Entites (Models) in this project are designed as User (USERS as table), Book as parent class of BookItem, BookItem (as an instance from Book) and BookRental (BOOK_RENTAL as table). I decided that the mapping between the User and the Book will be esablished through BookRental Entity, i.e there is:
   - @OneToOne mapping to User and
   - @OneToMany mapping to BookItems.
   
   Like this, we will have a separate Join Table (RENTED_BOOKS), where we will have the id from the Rental and the id from the Book. This keeps the data model clean, and easy to handle. (picture below)
   
-  ![image](https://user-images.githubusercontent.com/18428966/188004392-cd95c465-f71c-4b4a-bb41-f161e7927d32.png)
+  ![image](https://user-images.githubusercontent.com/18428966/188007728-1da8b8a2-cb66-48bb-a2c8-c1f92d192619.png)
 
 - The Projects code is structured in different packages.
 ```
@@ -69,16 +69,19 @@ mvn spring-boot:run
                 |   |   +- UserServiceImpl.java
 ```
 ## Testing
-- For Testing the Application, we can use Postman. Below you will find example JSON Objects that can be used for creating the Users and Books.
+- For running the Unit Test, we can do it through the IDE (I used Eclipse Version 2019-12 (4.14.0)) as Right Click on the project -> Run As -> JUnit Test.
+- For Integrative Testing of the Application, i used [Postman API Platform](https://www.postman.com/). Below you will find example JSON Objects that can be used for creating the Users and Books.
 
-*For Book:  
+- For Book:  
 ```
 {
 	"title":"Test Book 1",
 	"author":"Test Author 1",
 	"available":true
 }
-*For User:
+```
+- For User:
+```
 {
 	"displayName":"Test User 1",
 	"username":"test_username",
